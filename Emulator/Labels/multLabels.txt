@@ -1,0 +1,14 @@
+mov 10 R1
+mov 90 R2
+mov R2 acc
+sav
+mov 0 acc
+add R1
+swp
+sub 1
+jez endmult
+swp
+jmp 6
+endmult:swp
+mov acc r3
+here:jmp here
