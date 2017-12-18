@@ -1,4 +1,4 @@
-import urllib, random
+import urllib.request, random
 from bs4 import BeautifulSoup
 
 def get_links(path):
