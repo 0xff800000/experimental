@@ -1,4 +1,4 @@
-import urllib, random
+import urllib.request, random, datetime
 from bs4 import BeautifulSoup
 
 def get_links(path):
@@ -14,7 +14,7 @@ def get_links(path):
 	for p in page.findAll("a"):
 		if "class" not in p.attrs:
 			if "href" in p.attrs:
-				if "/wiki/" in p.attrs["href"] and p.attrs["href"] not in links and ":" not in p.attrs["href"]:
+				if "/wiki/" in p.attrs["href"] and p.attrs["href"] not in links and ":" not in p.attrs["href"] and "wikimediafoundation" not in p.attrs:
 					links.append(p.attrs["href"])
 
 	return links
@@ -26,7 +26,9 @@ def get_steps(start,stop,tree):
 		start = tree[start]
 	return path
 
-initial_link = "/wiki/Register_memory_architecture"
+# Random link
+initial_link = urllib.request.urlopen( "https://en.wikipedia.org" + "/wiki/Special:Random").geturl().split('.org')[1]
+#initial_link = "/wiki/Special:Random"
 target_link = "/wiki/Adolf_Hitler"
 
 current_link = initial_link
@@ -34,6 +36,8 @@ previous_link = initial_link
 explored_links = 0
 # link : coming from
 tree = {}
+print("Searching path from {} to {}.".format(initial_link,target_link))
+start_time = datetime.datetime.now()
 
 # Build frontier
 frontier = get_links(initial_link)
@@ -63,9 +67,11 @@ while target_link not in frontier:
 				next_in_front.append(d)
 
 	frontier += next_in_front
+stop_time = datetime.datetime.now()
 
 print("********************")
 print("Path found after exploring {} links.".format(explored_links))
+print("Time of execution : %s" % str(stop_time-start_time))
 print("Size of graph : {}".format(len(tree)))
 steps = get_steps(target_link,initial_link,tree)
 print("There is %i steps:" %len(steps))
