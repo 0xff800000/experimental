@@ -9,7 +9,7 @@ def get_links(path):
 	global initial_link
 	global explored_links
 	if found:
-		return []
+		return
 	print("Exploring : %s" % path)
 	try:
 		url = urllib.request.urlopen( "https://en.wikipedia.org" + path)
@@ -39,7 +39,7 @@ def get_steps(start,stop,tree):
 
 # Random link
 #initial_link = urllib.request.urlopen( "https://en.wikipedia.org" + "/wiki/Special:Random").geturl().split('.org')[1]
-initial_link = "/wiki/America"
+initial_link = "/wiki/Quaternion"
 target_link = "/wiki/Adolf_Hitler"
 
 current_link = initial_link
@@ -53,47 +53,42 @@ start_time = datetime.datetime.now()
 # Build frontier
 current_frontier = get_links(initial_link)
 frontier = []
-#print(current_frontier)
-#pool = Pool(processes=20)
+layer = 1
+tree[initial_link] = ''
 
 for f in current_frontier[0]:
 	tree[f] = current_frontier[1]
-#print("tree")
-#print(tree)
 current_frontier = current_frontier[0]
 
+pool = ThreadPool(processes=4)
 while not found:
 	if len(current_frontier) == 0:
 		print("Path between {} and {} could not be found...".format(initial_link,target_link))
 		exit(0)
 
-	# Take the first link and explore the page
-
-#	print("Exploring : %s" % current_link)
-	pool = ThreadPool(processes=20)
+	print('#'*10 + 'layer {}'.format(layer) + '#'*10)
+	layer += 1
 	discovered = pool.map(get_links, current_frontier)
-	pool.close()
-#	print(discovered)
-#	exit(0)
-#	explored_links += len(current_frontier)
 
 	# Add to tree
 	current_frontier = []
-	def test():
-		for d in discovered:
-			if len(d) == 0:
-				continue
-			links = d[0]
-			current_link = d[1]
-			for l in links:
-				if l not in tree:
-					tree[l] = current_link
-					if l not in current_frontier:
-						current_frontier.append(l)
-					if l == target_link:
-						print("@"*100)
-						return
+	for d in discovered:
+		if d == None:
+			continue
+		if len(d) == 0:
+			continue
+		links = d[0]
+		current_link = d[1]
+		for l in links:
+			if l not in tree:
+				tree[l] = current_link
+				if l not in current_frontier:
+					current_frontier.append(l)
+				if l == target_link:
+					print("@"*100)
+					break
 
+pool.close()
 
 stop_time = datetime.datetime.now()
 
