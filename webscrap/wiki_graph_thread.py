@@ -60,7 +60,7 @@ for f in current_frontier[0]:
 	tree[f] = current_frontier[1]
 current_frontier = current_frontier[0]
 
-pool = ThreadPool(processes=4)
+pool = ThreadPool(processes=2)
 while not found:
 	if len(current_frontier) == 0:
 		print("Path between {} and {} could not be found...".format(initial_link,target_link))
