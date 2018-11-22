@@ -1,3 +1,13 @@
 heightmap/10th.png
 heightmap/10th.png.obj
 heightmap/hm.jpg.obj
+
+deepDream/*.jpg
+deepDream/*.pb
+deepDream/*.zip
+deepDream/*.jpeg
+deepDream/*.txt
+deepDream/LICENSE
+
+
+
