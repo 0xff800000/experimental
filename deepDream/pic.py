@@ -17,7 +17,7 @@ def main():
 	local_zip_file = os.path.join(data_dir, model_name)
 	if not os.path.exists(local_zip_file):
 		# Download
-		model_url = urllib.urlopen(url)
+		model_url = urllib.request.urlopen(url)
 		with open(local_zip_file, 'wb') as output:
 			output.write(model_url.read())
 		# Extract
@@ -176,8 +176,10 @@ def main():
 			
 			#this will usually be like 3 or 4 octaves
 			#Step 5 output deep dream image via matplotlib
-		showarray(img/255.0)
-		return	PIL.Image.fromarray(img/255.0)
+		showarray(img/255)
+		print(type(img))
+		print(img/255.0)
+		return	PIL.Image.fromarray(np.uint8(img+np.min(img)))
 			
 		
 	#Step 3 - Pick a layer to enhance our image
@@ -198,6 +200,7 @@ def main():
 	index = 1
 	while os.path.exists(newPath):
 		newPath = 'DeepDream-'+ path.split('.')[0] + str(index) + '.jpeg'
+		index+=1
 
 	img1.save(newPath,'jpeg')
 	  
