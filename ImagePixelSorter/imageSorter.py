@@ -1,6 +1,9 @@
 from PIL import Image
 import os
 import string
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage.io import imread,imsave
 
 def imgSort(imgPath):
         img=Image.open(imgPath)
@@ -17,6 +20,7 @@ def imgSort(imgPath):
                 for x in range(img.size[0]):
                         pixels[x,y]=pixelLine[x]
         img.save('mod.png')
+        img.show()
         img.close()
 
 def blackAndWhite(imgPath):
@@ -30,3 +34,18 @@ def blackAndWhite(imgPath):
                         pixels[x,y]=(avg,avg,avg)
         img.save('mod.png')
         img.close()
+
+
+def imageRot(imgPath):
+        pixels = imread(imgPath)
+        orig_size = pixels.shape
+        new_size = (orig_size[0]-30,-1,3)
+        print(new_size)
+        img = np.reshape(pixels,(1,-1))
+        img = np.roll(img,100)
+        #img = np.roll(img,100,axis=1)
+        img = np.reshape(img,new_size)
+        plt.imshow(img)
+        plt.show()
+
+imageRot('a.png')
