@@ -129,3 +129,8 @@ while not t.final():
 
 print("Result of the Turing machine calculation:")
 print(t.get_tape())
+
+# Unit test
+for a in range(-10,10):
+    for b in range(-10,10):
+        print('a(dec:{},bin:{}) + b(dec:{},bin:{})'.format(a,a,b,b))
