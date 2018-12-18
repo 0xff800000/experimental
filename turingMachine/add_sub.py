@@ -1,8 +1,9 @@
+import sys
 from turingmachine import TuringMachine
 
 
 ## Add two numbers a + b, Note : LSB on the left side !
-tape_str = "1110000#1110000#"+10*' '
+tape_str = "10010000#11100000#"+10*' '
 initial_state = "start"
 transition_function = {
     # Select first digit of a
@@ -82,6 +83,7 @@ transition_function = {
 
     # Carry + 0
     ("carry+?","0"):("carry+0", ".", "R"),
+    ("carry+?","#"):("Accept", "#", "N"),   # Overflow
     ("carry+?","1"):("carry+1", ".", "R"),
     ("carry+1","0"):("carry+1", "0", "R"),
     ("carry+1","1"):("carry+1", "1", "R"),
@@ -91,7 +93,7 @@ transition_function = {
     ("carry+0","#"):("carry+0+?", "#", "R"),
     ("carry+0+?","."):("carry+0+?", ".", "R"),
     ("carry+1+?","."):("carry+1+?", ".", "R"),
-    ("carry+1+?","0"):("zero+one", ".", "R"),
+    ("carry+1+?","0"):("one+one", ".", "R"),
     ("carry+1+?","1"):("one+one+one", ".", "R"),
     ("carry+0+?","1"):("one+one", ".", "R"),
     ("carry+0+?","0"):("zero+one", ".", "R"),
@@ -133,4 +135,36 @@ print(t.get_tape())
 # Unit test
 for a in range(-10,10):
     for b in range(-10,10):
-        print('a(dec:{},bin:{}) + b(dec:{},bin:{})'.format(a,a,b,b))
+        a_str = ''
+        b_str = ''
+        a_p_b = a+b
+        a_p_b_str = ''
+        if a >= 0:
+            a_str = '{0:08b}'.format(a)
+        else:
+            a_str = bin(a & 0xff)[2:]
+        if b >= 0:
+            b_str = '{0:08b}'.format(b)
+        else:
+            b_str = bin(b & 0xff)[2:]
+        if a_p_b >= 0:
+            a_p_b_str = '{0:08b}'.format(a_p_b)
+        else:
+            a_p_b_str = bin(a_p_b & 0xff)[2:]
+        print("a ",a," ",a_str,"; b ",b,b_str,"; a+b ",a_p_b," ",a_p_b_str)
+        test_tape = a_str[::-1] + "#" + b_str[::-1] + "#" + 10*' '
+        print(test_tape)
+        tm = TuringMachine(test_tape,
+                          initial_state = initial_state,
+                          final_states = final_states,
+                          transition_function=transition_function)
+        while not tm.final():
+            # tm.print_state()
+            tm.step()
+        print(tm.get_tape())
+        result_correct = tm.get_tape().split('#')[2][:-1][::-1]==a_p_b_str
+        print(result_correct)
+        if not result_correct:
+            print('Unit test failed')
+            sys.exit(-1)
+print('Unit test passed')
